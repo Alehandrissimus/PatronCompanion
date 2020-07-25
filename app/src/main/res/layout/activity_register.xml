@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:text="Registration"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:layout_margin="16dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/textView5">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:lines="1"
+            android:maxLines="1"
+            app:layout_constraintTop_toBottomOf="@+id/textView5" >
+
+            <EditText
+                android:id="@+id/registration_username_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="16"
+                android:hint="Username"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="16dp"
+            android:lines="1"
+            android:maxLines="1"
+            app:counterEnabled="true"
+            app:counterTextAppearance="@style/AppTheme"
+            app:counterMaxLength="16"
+            app:layout_constraintTop_toBottomOf="@+id/textView5">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/registration_username_pass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="16"
+                android:hint="Password"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="16dp"
+            android:lines="1"
+            android:maxLines="1"
+            app:layout_constraintTop_toBottomOf="@+id/textView5" >
+
+            <EditText
+                android:id="@+id/registration_username_mail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="16"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:autofillHints="test" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+    <Button style="@style/Widget.AppCompat.Button"
+        android:id="@+id/registration_confirm_button"
+        android:layout_width="250dp"
+        android:layout_height="100dp"
+        android:layout_margin="50dp"
+        android:background="@drawable/btn_rounded"
+        android:text="CONFIRM"
+        android:textSize="25sp"
+        android:textColor="#ffffff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
