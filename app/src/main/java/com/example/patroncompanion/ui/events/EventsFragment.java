@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -49,7 +50,9 @@ public class EventsFragment extends Fragment {
     private String[] mDataTexts;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        username = getArguments().getString("username");
+        if (getArguments() != null) {
+            username = getArguments().getString("username");
+        }
         Log.d("TAG", "events fragment username = " + username);
 
         root = inflater.inflate(R.layout.fragment_events, container, false);
@@ -82,12 +85,12 @@ public class EventsFragment extends Fragment {
             e.printStackTrace();
             dbt.cancel(true);
             DialogFragment dialog = new DBConnectionAlertDialogFragment();
-            dialog.show(getActivity().getSupportFragmentManager(), "No connection");
+            dialog.show(requireActivity().getSupportFragmentManager(), "No connection");
         }
 
         //-----------------------------------------------------------------------------------------
 
-        mRecyclerView = (RecyclerView) root.findViewById(R.id.events_recycleView);
+        mRecyclerView = root.findViewById(R.id.events_recycleView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new EventsListAdapter(createMockListData(), username, getActivity());
         mRecyclerView.setAdapter(mAdapter);
@@ -111,15 +114,11 @@ public class EventsFragment extends Fragment {
                     e.printStackTrace();
                 }
                 data.get(i).setDate(date);
+                //sadasdadsad
             }
         }
 
         return data;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
     }
 
     @Override
@@ -151,10 +150,10 @@ public class EventsFragment extends Fragment {
             e.printStackTrace();
             dbt.cancel(true);
             DialogFragment dialog = new DBConnectionAlertDialogFragment();
-            dialog.show(getActivity().getSupportFragmentManager(), "No connection");
+            dialog.show(requireActivity().getSupportFragmentManager(), "No connection");
         }
 
-        mRecyclerView = (RecyclerView) root.findViewById(R.id.events_recycleView);
+        mRecyclerView = root.findViewById(R.id.events_recycleView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new EventsListAdapter(createMockListData(), username, getActivity());
         mRecyclerView.setAdapter(mAdapter);
