@@ -33,12 +33,12 @@ public class EventAddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_new);
 
-        mTextDate = (EditText) findViewById(R.id.event_select_date);
-        mTextTime = (EditText) findViewById(R.id.event_select_time);
-        mEditText = (EditText) findViewById(R.id.event_insert_text);
-        mButtonConfirm = (Button) findViewById(R.id.event_insert_date);
-        mButtonDate = (Button) findViewById(R.id.event_select_date_btn);
-        mButtonTime = (Button) findViewById(R.id.event_select_time_btn);
+        mTextDate = findViewById(R.id.event_select_date);
+        mTextTime = findViewById(R.id.event_select_time);
+        mEditText = findViewById(R.id.event_insert_text);
+        mButtonConfirm = findViewById(R.id.event_insert_date);
+        mButtonDate = findViewById(R.id.event_select_date_btn);
+        mButtonTime = findViewById(R.id.event_select_time_btn);
 
         mButtonDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,7 +51,7 @@ public class EventAddActivity extends AppCompatActivity {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(EventAddActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        String date = (year + "-" + (month + 1) + "-" + dayOfMonth);
+                        date = (year + "-" + (month + 1) + "-" + dayOfMonth);
                         mTextDate.setText(date);
                     }
                 }, mYear, mMonth, mDay);
@@ -69,7 +69,7 @@ public class EventAddActivity extends AppCompatActivity {
                 TimePickerDialog timePickerDialog = new TimePickerDialog(EventAddActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        String time = (hourOfDay + ":" + minute);
+                        time = (hourOfDay + ":" + minute + ":00");
                         mTextTime.setText(time);
                     }
                 }, mHour, mMinute, true);
@@ -85,7 +85,8 @@ public class EventAddActivity extends AppCompatActivity {
 
                 String text = mEditText.getText().toString();
                 a.putString("STR", text);
-                a.putString("DATE", (time + " " + date));
+                a.putString("DATE", (date + " " + time));
+                Log.d("TAS", (date + " " + time));
                 intent.putExtras(a);
 
                 DBAddEventData db = new DBAddEventData();

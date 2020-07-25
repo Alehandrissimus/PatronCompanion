@@ -106,7 +106,7 @@ public class EventsFragment extends Fragment {
                 data.add(new EventsElement());
                 data.get(i).setText(mDataTexts[i]);
 
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.ENGLISH);
+                SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-DD hh:mm:ss", Locale.ENGLISH);
                 Date date = null;
                 try {
                     date = formatter.parse(mDataDates[i]);
@@ -114,7 +114,6 @@ public class EventsFragment extends Fragment {
                     e.printStackTrace();
                 }
                 data.get(i).setDate(date);
-                //sadasdadsad
             }
         }
 
