@@ -1,20 +1,14 @@
 package com.example.patroncompanion.ui.events;
 
-import android.content.Context;
-import android.content.Intent;
-import android.nfc.cardemulation.HostNfcFService;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,20 +16,16 @@ import com.example.patroncompanion.R;
 import com.example.patroncompanion.database.DBConnectionAlertDialogFragment;
 import com.example.patroncompanion.database.DBGetEventsDate;
 import com.example.patroncompanion.database.DBGetEventsText;
-import com.example.patroncompanion.ui.home.HomeFragment;
 
-import java.text.BreakIterator;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.zip.Inflater;
 
 public class EventsFragment extends Fragment {
     int rowsCount;
@@ -106,7 +96,7 @@ public class EventsFragment extends Fragment {
                 data.add(new EventsElement());
                 data.get(i).setText(mDataTexts[i]);
 
-                SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-DD hh:mm:ss", Locale.ENGLISH);
+                SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-DD hh:mm:ss", Locale.getDefault());
                 Date date = null;
                 try {
                     date = formatter.parse(mDataDates[i]);

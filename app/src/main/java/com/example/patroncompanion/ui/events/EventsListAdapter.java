@@ -2,7 +2,9 @@ package com.example.patroncompanion.ui.events;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.patroncompanion.R;
 
-import org.w3c.dom.Text;
-
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -25,6 +27,7 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private List<EventsElement> data;
     private String username;
+    EventsViewHolder a;
     private Context context;
 
     public EventsListAdapter(List<EventsElement> data, String username, Context context) {
@@ -50,9 +53,31 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof EventsViewHolder) {
-            EventsViewHolder a = new EventsViewHolder(holder.itemView);
+            a = new EventsViewHolder(holder.itemView);
             a.mTextView.setText(data.get(position-1).getText());
-            a.mDataText.setText(data.get(position-1).getDate().toString());
+            //a.mDataText.setText(data.get(position-1).getDate().toString());
+
+            Date eventDate = data.get(position-1).getDate();
+            Date curDate = Calendar.getInstance().getTime();
+            Log.d("TAS", "eventDate = " + eventDate + " curDate = " + curDate);
+            if(curDate.before(eventDate)) {
+                long milliseconds = eventDate.getTime() - curDate.getTime();
+                Log.d("TAS", String.valueOf((milliseconds)));
+                CountDownTimer timer = new CountDownTimer(milliseconds, 1000) {
+                    public void onTick(long millisUntilFinished) {
+                        Log.d("TAS", "millis = " + millisUntilFinished);
+                        long seconds = ((millisUntilFinished / 1000) % 60) ;
+                        long minutes = ((millisUntilFinished / (1000*60)) % 60);
+                        long hours   = ((millisUntilFinished / (1000*60*60)));
+                        a.mDataText.setText(String.format("%02d:%02d:%02d",hours,minutes,seconds));
+                    }
+                    public void onFinish() {
+                        a.mDataText.setText("Time Up");
+                    }
+                };
+                timer.start();
+
+            }
 
             a.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -121,4 +146,37 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return position == 0;
     }
 
+    /*
+    public class AsyncTimerTask extends AsyncTask<Bundle, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Bundle... bundles) {
+
+            Bundle bundle = bundles[0];
+            int position = bundle.getInt("position");
+            Date eventDate = data.get(position - 1).getDate();
+            Date curDate = Calendar.getInstance().getTime();
+            if (curDate.before(eventDate)) {
+                long milliseconds = eventDate.getTime() - curDate.getTime();
+                Log.d("TAS", String.valueOf((milliseconds)));
+                CountDownTimer timer = new CountDownTimer(milliseconds, 1000) {
+                    public void onTick(long millisUntilFinished) {
+                        Log.d("TAS", "millis = " + millisUntilFinished);
+                        long seconds = ((millisUntilFinished / 1000) % 60);
+                        long minutes = ((millisUntilFinished / (1000 * 60)) % 60);
+                        long hours = ((millisUntilFinished / (1000 * 60 * 60)));
+                        a.mDataText.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+                    }
+
+                    public void onFinish() {
+                        a.mDataText.setText("Time Up");
+                    }
+                };
+                timer.start();
+            }
+            return null;
+        }
+    }
+
+     */
 }

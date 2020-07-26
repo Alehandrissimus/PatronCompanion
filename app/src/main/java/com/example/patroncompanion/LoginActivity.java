@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -37,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         mUsername = (EditText) findViewById(R.id.login_username);
         mPassword = (EditText) findViewById(R.id.login_password);
         mErrorText = (TextView) findViewById(R.id.login_error_text);
+
         mButtonRegister = (Button) findViewById(R.id.login_button_registration);
         mButtonFast = (Button) findViewById(R.id.login_test_skip);
         mFragmentManager = getSupportFragmentManager();
