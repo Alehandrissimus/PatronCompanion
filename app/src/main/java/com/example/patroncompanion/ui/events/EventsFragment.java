@@ -96,10 +96,11 @@ public class EventsFragment extends Fragment {
                 data.add(new EventsElement());
                 data.get(i).setText(mDataTexts[i]);
 
-                SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-DD hh:mm:ss", Locale.getDefault());
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
                 Date date = null;
                 try {
                     date = formatter.parse(mDataDates[i]);
+                    Log.d("TAM", String.valueOf(date));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

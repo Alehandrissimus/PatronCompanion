@@ -2,8 +2,6 @@ package com.example.patroncompanion.ui.events;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -59,9 +57,10 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             Date eventDate = data.get(position-1).getDate();
             Date curDate = Calendar.getInstance().getTime();
+            long milliseconds = eventDate.getTime() - curDate.getTime();
             Log.d("TAS", "eventDate = " + eventDate + " curDate = " + curDate);
+            Log.d("TAS", "eventDate = " + eventDate.getTime() + " curDate = " + curDate.getTime());
             if(curDate.before(eventDate)) {
-                long milliseconds = eventDate.getTime() - curDate.getTime();
                 Log.d("TAS", String.valueOf((milliseconds)));
                 CountDownTimer timer = new CountDownTimer(milliseconds, 1000) {
                     public void onTick(long millisUntilFinished) {
@@ -76,8 +75,8 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     }
                 };
                 timer.start();
-
             }
+            a.mDataText.setText(" " + milliseconds);
 
             a.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -114,18 +113,19 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             mCardView = (CardView) itemView.findViewById(R.id.events_cardView);
             mTextView = (TextView) itemView.findViewById(R.id.events_title);
             mDataText = (TextView) itemView.findViewById(R.id.events_date);
+
         }
     }
 
     public static class HeaderViewHolder extends RecyclerView.ViewHolder {
-        TextView mTextView;
-        Button mButton;
+        TextView mHTextView;
+        Button mHButton;
 
         public HeaderViewHolder(View itemView) {
             super(itemView);
 
-            mTextView = (TextView) itemView.findViewById(R.id.event_insert_text);
-            mButton = (Button) itemView.findViewById(R.id.event_insert_date);
+            mHTextView = (TextView) itemView.findViewById(R.id.event_insert_text);
+            mHButton = (Button) itemView.findViewById(R.id.event_insert_date);
         }
     }
 
