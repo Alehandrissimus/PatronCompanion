@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.patroncompanion.R;
 
+import java.sql.Array;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -29,8 +30,9 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private List<EventsElement> data;
     private String username;
-    EventsViewHolder a;
     private Context context;
+    private int timerCount = 0;
+    private List<EventsViewHolder> test;
 
     public EventsListAdapter(List<EventsElement> data, String username, Context context) {
         this.data = data;
@@ -55,44 +57,12 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof EventsViewHolder) {
-            a = new EventsViewHolder(holder.itemView);
+            EventsViewHolder a = new EventsViewHolder(holder.itemView);
             a.mTextView.setText(data.get(position - 1).getText());
-            //a.mDataText.setText(data.get(position-1).getDate().toString());
 
-            /*
-            if(a.timerCount==null) {
-                Date eventDate = data.get(position-1).getDate();
-                Date curDate = Calendar.getInstance().getTime();
-                long milliseconds = eventDate.getTime() - curDate.getTime();
-                Log.d("TAC", String.valueOf((milliseconds)));
-                ((EventsViewHolder) holder).timerCount = new CountDownTimer(milliseconds, 1000) {
-                    @Override
-                    public void onTick(long millis) {
-                        Log.d("TAC", String.valueOf((millis)));
-                        String hms = String.format("%02d:%02d",  TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
-                        ((EventsViewHolder) holder).mDataText.setText(hms);
-                    }
+            //timerCount = data.size();
+            //int[] test = new int[timerCount];
 
-                    @Override
-                    public void onFinish() {
-
-                    }
-                };
-            }
-            ((EventsViewHolder) holder).mDataText.setVisibility(View.VISIBLE);
-            ((EventsViewHolder) holder).timerCount.start();
-
-         */
-
-/*
-            Bundle bundle = new Bundle();
-            bundle.putInt("position", position);
-            bundle.putLi("data", data);
-
-            AsyncTimerTask task = new AsyncTimerTask();
-            task.execute(bundle);
-            */
-/*
             Date eventDate = data.get(position-1).getDate();
             Date curDate = Calendar.getInstance().getTime();
             long milliseconds = eventDate.getTime() - curDate.getTime();
@@ -103,22 +73,21 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 CountDownTimer timer = new CountDownTimer(milliseconds, 1000) {
                     public void onTick(long millisUntilFinished) {
                         Log.d("TAS", "millis = " + millisUntilFinished);
+                        EventsViewHolder b = new EventsViewHolder(holder.itemView);
                         long seconds = ((millisUntilFinished / 1000) % 60) ;
                         long minutes = ((millisUntilFinished / (1000*60)) % 60);
                         long hours   = ((millisUntilFinished / (1000*60*60)));
-                        a.mDataText.setText(String.format("%02d:%02d:%02d",hours,minutes,seconds));
+                        b.mDataText.setText(String.format("%02d:%02d:%02d",hours,minutes,seconds));
                     }
                     public void onFinish() {
-                        a.mDataText.setText("Time Up");
+                        EventsViewHolder b = new EventsViewHolder(holder.itemView);
+                        b.mDataText.setText("Time Up");
                     }
                 };
                 timer.start();
             }
-            a.mDataText.setText(" " + milliseconds);
 
- */
-
-            ((EventsViewHolder) holder).itemView.setOnClickListener(new View.OnClickListener() {
+            a.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, EventActivity.class);
@@ -198,6 +167,7 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         Log.d("TAN", "onAttachedToRecyclerView");
+        timerCount = 0;
     }
 
     @Override
@@ -212,10 +182,13 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         Log.d("TAN", "onViewAttachedToWindow");
     }
 
-    @Override
+    //@Override
     public void onViewDetachedFromWindow(@NonNull RecyclerView.ViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
         Log.d("TAN", "onViewDetachedFromWindow");
-        ((EventsViewHolder) holder).timerCount.cancel();
+        for(int i = 0; i < timerCount; i++) {
+            EventsViewHolder buf = test.get(i);
+            buf.timerCount.cancel();
+        }
     }
 }
