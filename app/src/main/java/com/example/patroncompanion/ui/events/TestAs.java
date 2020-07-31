@@ -12,7 +12,6 @@ public class TestAs extends AsyncTask<Bundle, Void, Void> {
 
     @Override
     protected Void doInBackground(Bundle... bundles) {
-        /*
         Bundle bundle = bundles[0];
         int position = bundle.getInt("position");
         Date eventDate = data.get(position-1).getDate();
@@ -37,7 +36,6 @@ public class TestAs extends AsyncTask<Bundle, Void, Void> {
             timer.start();
         }
 
-         */
         return null;
     }
 }

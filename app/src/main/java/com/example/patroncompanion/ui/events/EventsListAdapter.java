@@ -2,13 +2,17 @@ package com.example.patroncompanion.ui.events;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -52,15 +56,19 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof EventsViewHolder) {
             a = new EventsViewHolder(holder.itemView);
-            a.mTextView.setText(data.get(position-1).getText());
+            a.mTextView.setText(data.get(position - 1).getText());
             //a.mDataText.setText(data.get(position-1).getDate().toString());
+
+            /*
             if(a.timerCount==null) {
                 Date eventDate = data.get(position-1).getDate();
                 Date curDate = Calendar.getInstance().getTime();
                 long milliseconds = eventDate.getTime() - curDate.getTime();
+                Log.d("TAC", String.valueOf((milliseconds)));
                 ((EventsViewHolder) holder).timerCount = new CountDownTimer(milliseconds, 1000) {
                     @Override
                     public void onTick(long millis) {
+                        Log.d("TAC", String.valueOf((millis)));
                         String hms = String.format("%02d:%02d",  TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
                         ((EventsViewHolder) holder).mDataText.setText(hms);
                     }
@@ -74,6 +82,8 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             ((EventsViewHolder) holder).mDataText.setVisibility(View.VISIBLE);
             ((EventsViewHolder) holder).timerCount.start();
 
+         */
+
 /*
             Bundle bundle = new Bundle();
             bundle.putInt("position", position);
@@ -81,7 +91,8 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             AsyncTimerTask task = new AsyncTimerTask();
             task.execute(bundle);
-
+            */
+/*
             Date eventDate = data.get(position-1).getDate();
             Date curDate = Calendar.getInstance().getTime();
             long milliseconds = eventDate.getTime() - curDate.getTime();
@@ -107,12 +118,12 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
  */
 
-            a.itemView.setOnClickListener(new View.OnClickListener() {
+            ((EventsViewHolder) holder).itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, EventActivity.class);
-                    intent.putExtra("date", data.get(position-1).getDate().toString());
-                    intent.putExtra("text", data.get(position-1).getText());
+                    intent.putExtra("date", data.get(position - 1).getDate().toString());
+                    intent.putExtra("text", data.get(position - 1).getText());
                     context.startActivity(intent);
                 }
             });
@@ -162,7 +173,7 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        return data.size()+1;
+        return data.size() + 1;
     }
 
     @Override
@@ -177,40 +188,34 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return position == 0;
     }
 
-
-    /*
-    public class AsyncTimerTask extends AsyncTask<Bundle, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Bundle... bundles) {
-
-            Bundle bundle = bundles[0];
-            int position = bundle.getInt("position");
-            Date eventDate = data.get(position-1).getDate();
-            Date curDate = Calendar.getInstance().getTime();
-            long milliseconds = eventDate.getTime() - curDate.getTime();
-            Log.d("TAS", "eventDate = " + eventDate + " curDate = " + curDate);
-            Log.d("TAS", "eventDate = " + eventDate.getTime() + " curDate = " + curDate.getTime());
-            if(curDate.before(eventDate)) {
-                Log.d("TAS", String.valueOf((milliseconds)));
-                CountDownTimer timer = new CountDownTimer(milliseconds, 1000) {
-                    public void onTick(long millisUntilFinished) {
-                        Log.d("TAS", "millis = " + millisUntilFinished);
-                        long seconds = ((millisUntilFinished / 1000) % 60) ;
-                        long minutes = ((millisUntilFinished / (1000*60)) % 60);
-                        long hours   = ((millisUntilFinished / (1000*60*60)));
-                        a.mDataText.setText(String.format("%02d:%02d:%02d",hours,minutes,seconds));
-                    }
-                    public void onFinish() {
-                        a.mDataText.setText("Time Up");
-                    }
-                };
-                timer.start();
-            }
-            return null;
-        }
+    @Override
+    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+        super.onViewRecycled(holder);
+        Log.d("TAN", "onViewRecycled");
     }
-     */
 
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        Log.d("TAN", "onAttachedToRecyclerView");
+    }
 
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        Log.d("TAN", "onDetachedFromRecyclerView");
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        Log.d("TAN", "onViewAttachedToWindow");
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull RecyclerView.ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        Log.d("TAN", "onViewDetachedFromWindow");
+        ((EventsViewHolder) holder).timerCount.cancel();
+    }
 }
