@@ -3,7 +3,6 @@ package com.example.patroncompanion.ui.events;
 import android.content.Context;
 import android.content.Intent;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +17,7 @@ import com.example.patroncompanion.R;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_HEADER = 0;
@@ -49,11 +49,38 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof EventsViewHolder) {
             a = new EventsViewHolder(holder.itemView);
             a.mTextView.setText(data.get(position-1).getText());
             //a.mDataText.setText(data.get(position-1).getDate().toString());
+            if(a.timerCount==null) {
+                Date eventDate = data.get(position-1).getDate();
+                Date curDate = Calendar.getInstance().getTime();
+                long milliseconds = eventDate.getTime() - curDate.getTime();
+                ((EventsViewHolder) holder).timerCount = new CountDownTimer(milliseconds, 1000) {
+                    @Override
+                    public void onTick(long millis) {
+                        String hms = String.format("%02d:%02d",  TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+                        ((EventsViewHolder) holder).mDataText.setText(hms);
+                    }
+
+                    @Override
+                    public void onFinish() {
+
+                    }
+                };
+            }
+            ((EventsViewHolder) holder).mDataText.setVisibility(View.VISIBLE);
+            ((EventsViewHolder) holder).timerCount.start();
+
+/*
+            Bundle bundle = new Bundle();
+            bundle.putInt("position", position);
+            bundle.putLi("data", data);
+
+            AsyncTimerTask task = new AsyncTimerTask();
+            task.execute(bundle);
 
             Date eventDate = data.get(position-1).getDate();
             Date curDate = Calendar.getInstance().getTime();
@@ -77,6 +104,8 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 timer.start();
             }
             a.mDataText.setText(" " + milliseconds);
+
+ */
 
             a.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -106,14 +135,16 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public static class EventsViewHolder extends RecyclerView.ViewHolder {
         CardView mCardView;
         TextView mTextView, mDataText;
+        CountDownTimer timerCount;
 
         public EventsViewHolder(View itemView) {
             super(itemView);
 
+            timerCount = null;
+
             mCardView = (CardView) itemView.findViewById(R.id.events_cardView);
             mTextView = (TextView) itemView.findViewById(R.id.events_title);
             mDataText = (TextView) itemView.findViewById(R.id.events_date);
-
         }
     }
 
@@ -146,6 +177,7 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return position == 0;
     }
 
+
     /*
     public class AsyncTimerTask extends AsyncTask<Bundle, Void, Void> {
 
@@ -154,20 +186,21 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             Bundle bundle = bundles[0];
             int position = bundle.getInt("position");
-            Date eventDate = data.get(position - 1).getDate();
+            Date eventDate = data.get(position-1).getDate();
             Date curDate = Calendar.getInstance().getTime();
-            if (curDate.before(eventDate)) {
-                long milliseconds = eventDate.getTime() - curDate.getTime();
+            long milliseconds = eventDate.getTime() - curDate.getTime();
+            Log.d("TAS", "eventDate = " + eventDate + " curDate = " + curDate);
+            Log.d("TAS", "eventDate = " + eventDate.getTime() + " curDate = " + curDate.getTime());
+            if(curDate.before(eventDate)) {
                 Log.d("TAS", String.valueOf((milliseconds)));
                 CountDownTimer timer = new CountDownTimer(milliseconds, 1000) {
                     public void onTick(long millisUntilFinished) {
                         Log.d("TAS", "millis = " + millisUntilFinished);
-                        long seconds = ((millisUntilFinished / 1000) % 60);
-                        long minutes = ((millisUntilFinished / (1000 * 60)) % 60);
-                        long hours = ((millisUntilFinished / (1000 * 60 * 60)));
-                        a.mDataText.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+                        long seconds = ((millisUntilFinished / 1000) % 60) ;
+                        long minutes = ((millisUntilFinished / (1000*60)) % 60);
+                        long hours   = ((millisUntilFinished / (1000*60*60)));
+                        a.mDataText.setText(String.format("%02d:%02d:%02d",hours,minutes,seconds));
                     }
-
                     public void onFinish() {
                         a.mDataText.setText("Time Up");
                     }
@@ -177,6 +210,7 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             return null;
         }
     }
-
      */
+
+
 }
