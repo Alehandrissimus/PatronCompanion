@@ -16,6 +16,7 @@ import com.example.patroncompanion.R;
 import com.example.patroncompanion.database.DBConnectionAlertDialogFragment;
 import com.example.patroncompanion.database.DBGetEventsDate;
 import com.example.patroncompanion.database.DBGetEventsText;
+import com.example.patroncompanion.database.DBGetEventsTitle;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,25 +38,26 @@ public class EventsFragment extends Fragment {
     private TextView mTextView;
     private RecyclerView mRecyclerView;
     private String[] mDataDates;
+    private String[] mDataTitles;
     private String[] mDataTexts;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (getArguments() != null) {
             username = getArguments().getString("username");
         }
-        //Log.d("TAG", "events fragment username = " + username);
+        Log.d("TAG", "events fragment username = " + username);
 
         root = inflater.inflate(R.layout.fragment_events, container, false);
 
         //-----------------------------------------------------------------------------------------
 
 
-        Bundle DBDates;
         DBGetEventsDate dbd = new DBGetEventsDate();
+        Bundle DBDates;
         dbd.execute(username);
 
         try {
-            DBDates = dbd.get(10000, TimeUnit.MILLISECONDS);
+            DBDates = dbd.get(2000, TimeUnit.MILLISECONDS);
             mDataDates = DBDates.getStringArray("KEY_STARR");
             rowsCount = DBDates.getInt("KEY_INT");
         } catch (ExecutionException | InterruptedException | TimeoutException e) {
@@ -63,20 +65,36 @@ public class EventsFragment extends Fragment {
 
         }
 
-        DBGetEventsText dbt = new DBGetEventsText();
-        Bundle DBText = new Bundle();
-        DBText.putString("username", username);
-        DBText.putInt("rowsCount", rowsCount);
-        dbt.execute(DBText);
+        DBGetEventsTitle dbt = new DBGetEventsTitle();
+        Bundle DBTitle = new Bundle();
+        DBTitle.putString("username", username);
+        DBTitle.putInt("rowsCount", rowsCount);
+        dbt.execute(DBTitle);
 
         try {
-            mDataTexts = dbt.get(10000, TimeUnit.MILLISECONDS);
+            mDataTitles = dbt.get(2000, TimeUnit.MILLISECONDS);
         } catch (ExecutionException | InterruptedException | TimeoutException e) {
             e.printStackTrace();
             dbt.cancel(true);
             DialogFragment dialog = new DBConnectionAlertDialogFragment();
             dialog.show(requireActivity().getSupportFragmentManager(), "No connection");
         }
+
+        DBGetEventsText dbtxt = new DBGetEventsText();
+        Bundle DBText = new Bundle();
+        DBText.putString("username", username);
+        DBText.putInt("rowsCount", rowsCount);
+        dbtxt.execute(DBText);
+
+        try {
+            mDataTexts = dbtxt.get(2000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            e.printStackTrace();
+            dbtxt.cancel(true);
+            DialogFragment dialog = new DBConnectionAlertDialogFragment();
+            dialog.show(requireActivity().getSupportFragmentManager(), "No connection");
+        }
+
 
         //-----------------------------------------------------------------------------------------
 
@@ -91,9 +109,10 @@ public class EventsFragment extends Fragment {
 
     private List<EventsElement> createMockListData() {
         List<EventsElement> data = new ArrayList<>();
-        if(mDataTexts != null && mDataDates != null) {
+        if(mDataTitles != null && mDataDates != null) {
             for (int i = 0; i < rowsCount; i++) {
                 data.add(new EventsElement());
+                data.get(i).setTitle(mDataTitles[i]);
                 data.get(i).setText(mDataTexts[i]);
 
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
@@ -107,7 +126,6 @@ public class EventsFragment extends Fragment {
                 data.get(i).setDate(date);
             }
         }
-
         return data;
     }
 
@@ -116,29 +134,45 @@ public class EventsFragment extends Fragment {
         super.onResume();
         //Log.d("TAD", "onResume called");
 
-        Bundle DBDates;
         DBGetEventsDate dbd = new DBGetEventsDate();
+        Bundle DBDates;
         dbd.execute(username);
 
         try {
-            DBDates = dbd.get(10000, TimeUnit.MILLISECONDS);
+            DBDates = dbd.get(2000, TimeUnit.MILLISECONDS);
             mDataDates = DBDates.getStringArray("KEY_STARR");
             rowsCount = DBDates.getInt("KEY_INT");
         } catch (ExecutionException | InterruptedException | TimeoutException e) {
             e.printStackTrace();
+
         }
 
-        DBGetEventsText dbt = new DBGetEventsText();
-        Bundle DBText = new Bundle();
-        DBText.putString("username", username);
-        DBText.putInt("rowsCount", rowsCount);
-        dbt.execute(DBText);
+        DBGetEventsTitle dbt = new DBGetEventsTitle();
+        Bundle DBTitle = new Bundle();
+        DBTitle.putString("username", username);
+        DBTitle.putInt("rowsCount", rowsCount);
+        dbt.execute(DBTitle);
 
         try {
-            mDataTexts = dbt.get(10000, TimeUnit.MILLISECONDS);
+            mDataTitles = dbt.get(2000, TimeUnit.MILLISECONDS);
         } catch (ExecutionException | InterruptedException | TimeoutException e) {
             e.printStackTrace();
             dbt.cancel(true);
+            DialogFragment dialog = new DBConnectionAlertDialogFragment();
+            dialog.show(requireActivity().getSupportFragmentManager(), "No connection");
+        }
+
+        DBGetEventsText dbtxt = new DBGetEventsText();
+        Bundle DBText = new Bundle();
+        DBText.putString("username", username);
+        DBText.putInt("rowsCount", rowsCount);
+        dbtxt.execute(DBText);
+
+        try {
+            mDataTexts = dbtxt.get(2000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            e.printStackTrace();
+            dbtxt.cancel(true);
             DialogFragment dialog = new DBConnectionAlertDialogFragment();
             dialog.show(requireActivity().getSupportFragmentManager(), "No connection");
         }

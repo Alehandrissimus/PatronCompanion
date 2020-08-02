@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class DBGetEventsText extends AsyncTask<Bundle, Void, String[]> {
+public class DBGetEventsTitle extends AsyncTask<Bundle, Void, String[]> {
 
     @Override
     protected String[] doInBackground(Bundle... bundles) {
@@ -27,10 +27,10 @@ public class DBGetEventsText extends AsyncTask<Bundle, Void, String[]> {
         Bundle b = bundles[0];
         String buf = b.getString("username");
         int rowsCount = b.getInt("rowsCount", 100);
-        //Log.d("TAS", "rows = " + rowsCount);
-        //Log.d("TAG", "name = " + buf +" rows = " + rowsCount);
+        Log.d("TAS", "rows = " + rowsCount);
+        Log.d("TAG", "name = " + buf +" rows = " + rowsCount);
 
-        String[] eventTexts = new String[rowsCount];
+        String[] eventTitle = new String[rowsCount];
 
         String sql = "SELECT * FROM sys.eventsdata WHERE username = '" + buf + "'\n" + "ORDER BY eventDate;";
 
@@ -39,7 +39,7 @@ public class DBGetEventsText extends AsyncTask<Bundle, Void, String[]> {
                 try(ResultSet result = statement.executeQuery(sql)) {
                     int i = 0;
                     while (result.next()) {
-                        eventTexts[i] = result.getString("eventText");
+                        eventTitle[i] = result.getString("eventTitle");
                         i++;
                     }
                 }
@@ -48,7 +48,7 @@ public class DBGetEventsText extends AsyncTask<Bundle, Void, String[]> {
             e.printStackTrace();
         }
 
-        return eventTexts;
+        return eventTitle;
     }
 
     @Override

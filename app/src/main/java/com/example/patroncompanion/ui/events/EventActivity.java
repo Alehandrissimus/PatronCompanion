@@ -10,7 +10,7 @@ import com.example.patroncompanion.R;
 
 
 public class EventActivity extends AppCompatActivity {
-    private TextView mTitle, mDate;
+    private TextView mTitle, mDate, mText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -18,8 +18,10 @@ public class EventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event);
 
         mTitle = (TextView) findViewById(R.id.event_activity_title);
+        mText = (TextView) findViewById(R.id.event_activity_text);
         mDate = (TextView) findViewById(R.id.event_activity_date);
-        mTitle.setText(getIntent().getStringExtra("text"));
+        mTitle.setText(getIntent().getStringExtra("title"));
+        mText.setText(getIntent().getStringExtra("text"));
         mDate.setText(getIntent().getStringExtra("date"));
     }
 }

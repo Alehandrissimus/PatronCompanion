@@ -2,10 +2,7 @@ package com.example.patroncompanion.ui.events;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.patroncompanion.R;
 
-import java.sql.Array;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_HEADER = 0;
@@ -58,7 +53,7 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof EventsViewHolder) {
             EventsViewHolder a = new EventsViewHolder(holder.itemView);
-            a.mTextView.setText(data.get(position - 1).getText());
+            a.mTextView.setText(data.get(position - 1).getTitle());
 
             Date eventDate = data.get(position-1).getDate();
             Date curDate = Calendar.getInstance().getTime();
@@ -82,15 +77,16 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 };
                 timer.start();
             } else {
-                a.mDataText.setText("Time Up");
+                a.mDataText.setText("Time's Up");
             }
 
             a.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, EventActivity.class);
-                    intent.putExtra("date", data.get(position - 1).getDate().toString());
+                    intent.putExtra("title", data.get(position - 1).getTitle());
                     intent.putExtra("text", data.get(position - 1).getText());
+                    intent.putExtra("date", data.get(position - 1).getDate().toString());
                     context.startActivity(intent);
                 }
             });
