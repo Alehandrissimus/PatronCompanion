@@ -43,7 +43,7 @@ public class EventsFragment extends Fragment {
         if (getArguments() != null) {
             username = getArguments().getString("username");
         }
-        Log.d("TAG", "events fragment username = " + username);
+        //Log.d("TAG", "events fragment username = " + username);
 
         root = inflater.inflate(R.layout.fragment_events, container, false);
 
@@ -85,7 +85,7 @@ public class EventsFragment extends Fragment {
         mAdapter = new EventsListAdapter(createMockListData(), username, getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
-        Log.d("TAG", "EventsCalled");
+        //Log.d("TAG", "EventsCalled");
         return root;
     }
 
@@ -114,7 +114,7 @@ public class EventsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("TAD", "onResume called");
+        //Log.d("TAD", "onResume called");
 
         Bundle DBDates;
         DBGetEventsDate dbd = new DBGetEventsDate();
@@ -147,10 +147,6 @@ public class EventsFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new EventsListAdapter(createMockListData(), username, getActivity());
         mRecyclerView.setAdapter(mAdapter);
-
-        for(int i = 0; i < (mAdapter.getItemCount()-1); i++) {
-            Log.d("TAS", "item = " + mAdapter.getItem(i).getText());
-        }
     }
 
     @Override

@@ -60,19 +60,15 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             EventsViewHolder a = new EventsViewHolder(holder.itemView);
             a.mTextView.setText(data.get(position - 1).getText());
 
-            //timerCount = data.size();
-            //int[] test = new int[timerCount];
-
             Date eventDate = data.get(position-1).getDate();
             Date curDate = Calendar.getInstance().getTime();
             long milliseconds = eventDate.getTime() - curDate.getTime();
-            Log.d("TAS", "eventDate = " + eventDate + " curDate = " + curDate);
-            Log.d("TAS", "eventDate = " + eventDate.getTime() + " curDate = " + curDate.getTime());
+            //Log.d("TAS", "eventDate = " + eventDate + " curDate = " + curDate);
+            //Log.d("TAS", "eventDate = " + eventDate.getTime() + " curDate = " + curDate.getTime());
             if(curDate.before(eventDate)) {
-                Log.d("TAS", String.valueOf((milliseconds)));
                 CountDownTimer timer = new CountDownTimer(milliseconds, 1000) {
                     public void onTick(long millisUntilFinished) {
-                        Log.d("TAS", "millis = " + millisUntilFinished);
+                        //Log.d("TAS", "millis = " + millisUntilFinished);
                         EventsViewHolder b = new EventsViewHolder(holder.itemView);
                         long seconds = ((millisUntilFinished / 1000) % 60) ;
                         long minutes = ((millisUntilFinished / (1000*60)) % 60);
@@ -85,6 +81,8 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     }
                 };
                 timer.start();
+            } else {
+                a.mDataText.setText("Time Up");
             }
 
             a.itemView.setOnClickListener(new View.OnClickListener() {
@@ -160,32 +158,32 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
         super.onViewRecycled(holder);
-        Log.d("TAN", "onViewRecycled");
+        //Log.d("TAN", "onViewRecycled");
     }
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        Log.d("TAN", "onAttachedToRecyclerView");
+        //Log.d("TAN", "onAttachedToRecyclerView");
         timerCount = 0;
     }
 
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
-        Log.d("TAN", "onDetachedFromRecyclerView");
+        //Log.d("TAN", "onDetachedFromRecyclerView");
     }
 
     @Override
     public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder) {
         super.onViewAttachedToWindow(holder);
-        Log.d("TAN", "onViewAttachedToWindow");
+        //Log.d("TAN", "onViewAttachedToWindow");
     }
 
-    //@Override
+    @Override
     public void onViewDetachedFromWindow(@NonNull RecyclerView.ViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
-        Log.d("TAN", "onViewDetachedFromWindow");
+        //Log.d("TAN", "onViewDetachedFromWindow");
         for(int i = 0; i < timerCount; i++) {
             EventsViewHolder buf = test.get(i);
             buf.timerCount.cancel();
