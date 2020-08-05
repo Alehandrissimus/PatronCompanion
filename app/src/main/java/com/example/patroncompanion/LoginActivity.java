@@ -38,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         mPassword = (EditText) findViewById(R.id.login_password);
         mErrorText = (TextView) findViewById(R.id.login_error_text);
         mButtonRegister = (Button) findViewById(R.id.login_button_registration);
-        mButtonFast = (Button) findViewById(R.id.login_test_skip);
+
         mFragmentManager = getSupportFragmentManager();
 
         mButtonLogin.setOnClickListener(new View.OnClickListener() {
