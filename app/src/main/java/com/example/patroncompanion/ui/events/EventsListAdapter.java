@@ -1,8 +1,11 @@
 package com.example.patroncompanion.ui.events;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +17,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.patroncompanion.R;
+import com.example.patroncompanion.utilities.AlarmReceiver;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -58,6 +62,16 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             Date eventDate = data.get(position-1).getDate();
             Date curDate = Calendar.getInstance().getTime();
             long milliseconds = eventDate.getTime() - curDate.getTime();
+
+            if(curDate.before(eventDate)) {
+                Log.d("TAW", "if true");
+                Intent intent = new Intent(context, AlarmReceiver.class);
+                intent.putExtra("NotificationText", "some text");
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, milliseconds, pendingIntent);
+            }
+
             //Log.d("TAS", "eventDate = " + eventDate + " curDate = " + curDate);
             //Log.d("TAS", "eventDate = " + eventDate.getTime() + " curDate = " + curDate.getTime());
             if(curDate.before(eventDate)) {

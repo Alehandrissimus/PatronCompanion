@@ -27,8 +27,8 @@ public class DBGetEventsTitle extends AsyncTask<Bundle, Void, String[]> {
         Bundle b = bundles[0];
         String buf = b.getString("username");
         int rowsCount = b.getInt("rowsCount", 100);
-        Log.d("TAS", "rows = " + rowsCount);
-        Log.d("TAG", "name = " + buf +" rows = " + rowsCount);
+        //Log.d("TAS", "rows = " + rowsCount);
+        //Log.d("TAG", "name = " + buf +" rows = " + rowsCount);
 
         String[] eventTitle = new String[rowsCount];
 

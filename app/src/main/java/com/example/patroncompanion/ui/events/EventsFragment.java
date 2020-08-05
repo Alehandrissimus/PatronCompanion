@@ -1,5 +1,9 @@
 package com.example.patroncompanion.ui.events;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +21,7 @@ import com.example.patroncompanion.database.DBConnectionAlertDialogFragment;
 import com.example.patroncompanion.database.DBGetEventsDate;
 import com.example.patroncompanion.database.DBGetEventsText;
 import com.example.patroncompanion.database.DBGetEventsTitle;
+import com.example.patroncompanion.utilities.AlarmReceiver;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -76,6 +81,7 @@ public class EventsFragment extends Fragment {
         } catch (ExecutionException | InterruptedException | TimeoutException e) {
             e.printStackTrace();
             dbt.cancel(true);
+
             DialogFragment dialog = new DBConnectionAlertDialogFragment();
             dialog.show(requireActivity().getSupportFragmentManager(), "No connection");
         }
@@ -94,6 +100,9 @@ public class EventsFragment extends Fragment {
             DialogFragment dialog = new DBConnectionAlertDialogFragment();
             dialog.show(requireActivity().getSupportFragmentManager(), "No connection");
         }
+
+        //-----------------------------------------------------------------------------------------
+
 
 
         //-----------------------------------------------------------------------------------------
