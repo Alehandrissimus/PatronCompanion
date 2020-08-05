@@ -18,6 +18,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivity extends AppCompatActivity {
     Button mButtonLogin, mButtonFast, mButtonRegister;
@@ -106,24 +108,25 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivityForResult(intent, 1001);
 
-                /*
-                FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
-                DatabaseReference mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
-
-                //FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), mUsername, null);
-                mMessagesDatabaseReference.setValue("test1");
-
-                 */
             }
         });
 
         mButtonFast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.putExtra("USERNAME_KEY", "test");
                 startActivity(intent);
                 finish();
+
+                 */
+
+                FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
+                DatabaseReference mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
+
+                //FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), mUsername, null);
+                mMessagesDatabaseReference.setValue("test1");
             }
         });
 
