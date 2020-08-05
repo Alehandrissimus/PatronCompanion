@@ -25,10 +25,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
     Button mButtonReg;
@@ -89,19 +87,24 @@ public class RegisterActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("TAG", "createUserWithEmail:success");
-                            //FirebaseUser user = mAuth.getCurrentUser();
+                            FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(RegisterActivity.this, "Registration success.", Toast.LENGTH_SHORT).show();
+                            Log.d("TAG", String.valueOf(user));
+
+                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            DatabaseReference userRef = database.getReference().child("test");
+
+                            userRef.push().setValue(user.getUid());
 
                             /*
                             Intent resultIntent = new Intent();
                             resultIntent.putExtra("UID", user);
                             setResult(Activity.RESULT_OK, resultIntent);
-
                              */
                             finish();
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w("TAG", "createUserWithEmail:failure", task.getException());
+                            Log.d("TAG", "createUserWithEmail:failure", task.getException());
                             DialogFragment dialog = new DBConnectionAlertDialogFragment();
                             dialog.show(getSupportFragmentManager(), "No connection");
                             Toast.makeText(RegisterActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();

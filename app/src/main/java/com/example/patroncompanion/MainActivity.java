@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         //NavigationUI.setupWithNavController(navigationView, navController);
 
+
     }
 
 
@@ -69,9 +70,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Log.d("TAG", "Method onNavigationItemSelected");
         if (item.getItemId() == R.id.nav_slideshow) {
-            Bundle bundle = new Bundle();
-            bundle.putString("username", username);
-            navController.navigate(R.id.nav_slideshow, bundle);
+            //Bundle bundle = new Bundle();
+            //bundle.putString("username", username);
+            //navController.navigate(R.id.nav_slideshow, bundle);
 
             drawer.closeDrawer(GravityCompat.START);
             return true;
