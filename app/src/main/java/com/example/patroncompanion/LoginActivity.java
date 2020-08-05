@@ -38,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         mErrorText = (TextView) findViewById(R.id.login_error_text);
 
         mButtonRegister = (Button) findViewById(R.id.login_button_registration);
-        mButtonFast = (Button) findViewById(R.id.login_test_skip);
+
         mFragmentManager = getSupportFragmentManager();
 
         mAuth = FirebaseAuth.getInstance();
