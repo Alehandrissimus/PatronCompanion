@@ -37,7 +37,7 @@
                 android:layout_height="39dp"
                 android:layout_gravity="center_horizontal"
                 android:ems="16"
-                android:hint="Username"
+                android:hint="Email"
                 android:inputType="textEmailAddress" />
 
         </com.google.android.material.textfield.TextInputLayout>
