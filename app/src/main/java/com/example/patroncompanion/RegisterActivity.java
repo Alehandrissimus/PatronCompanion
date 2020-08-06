@@ -89,12 +89,12 @@ public class RegisterActivity extends AppCompatActivity {
                             Log.d("TAG", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(RegisterActivity.this, "Registration success.", Toast.LENGTH_SHORT).show();
-                            Log.d("TAG", String.valueOf(user));
+                            Log.d("TAG", String.valueOf(user.getUid()));
 
                             FirebaseDatabase database = FirebaseDatabase.getInstance();
                             DatabaseReference userRef = database.getReference().child("test");
 
-                            userRef.push().setValue(user.getUid());
+                            //userRef.push().setValue(user.getUid());
 
                             /*
                             Intent resultIntent = new Intent();
