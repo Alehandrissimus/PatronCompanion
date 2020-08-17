@@ -1,34 +1,40 @@
 package com.example.patroncompanion.ui.events;
 
-import java.util.Date;
-
 public class EventsElement {
-    private String mTitle;
-    private Date mDate;
-    private String mText;
+    private String mId;
+    private String eventTitle;
+    private String eventDate;
+    private String eventText;
 
     public EventsElement() {
-        this.mTitle = null;
+        eventTitle = "null";
+        eventDate = "0";
+        eventText = "null";
     }
 
-    public String getTitle() {
-        return mTitle;
+    public String getEventTitle() {
+        return eventTitle;
     }
-    public void setTitle(String text) {
-        mTitle = text;
-    }
-
-    public Date getDate() {
-        return mDate;
-    }
-    public void setDate(Date date) {
-        mDate = date;
+    public void setEventTitle(String text) {
+        eventTitle = text;
     }
 
-    public String getText() {
-        return mText;
+    public String getEventDate() {
+        return eventDate;
     }
-    public void setText(String text) {
-        mText = text;
+    public void setEventDate(String eventDate) {
+        this.eventDate = eventDate;
+    }
+
+    public String getEventText() {
+        return eventText;
+    }
+    public void setEventText(String eventText) {
+        this.eventText = eventText;
+    }
+
+    public String getId() { return mId; }
+    public void setId(String id) {
+        mId = id;
     }
 }

@@ -1,7 +1,5 @@
 package com.example.patroncompanion.ui.events;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.CountDownTimer;
@@ -17,7 +15,6 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.patroncompanion.R;
-import com.example.patroncompanion.utilities.AlarmReceiver;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -31,7 +28,6 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private String username;
     private Context context;
     private int timerCount = 0;
-    private List<EventsViewHolder> test;
 
     public EventsListAdapter(List<EventsElement> data, String username, Context context) {
         this.data = data;
@@ -57,23 +53,19 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof EventsViewHolder) {
             EventsViewHolder a = new EventsViewHolder(holder.itemView);
-            a.mTextView.setText(data.get(position - 1).getTitle());
+            a.mTextView.setText(data.get(position - 1).getEventTitle());
+            a.mDataText.setText(data.get(position - 1).getEventText());
+            Log.d("TSH", "Creating eveviewhgoldr");
+            Log.d("TSH", data.get(0).getEventTitle());
 
-            Date eventDate = data.get(position-1).getDate();
+            /*
+            Date eventDate = data.get(position-1).getEventDate();
             Date curDate = Calendar.getInstance().getTime();
             long milliseconds = eventDate.getTime() - curDate.getTime();
 
-            if(curDate.before(eventDate)) {
-                Log.d("TAW", "if true");
-                Intent intent = new Intent(context, AlarmReceiver.class);
-                intent.putExtra("NotificationText", "some text");
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, milliseconds, pendingIntent);
-            }
-
             //Log.d("TAS", "eventDate = " + eventDate + " curDate = " + curDate);
             //Log.d("TAS", "eventDate = " + eventDate.getTime() + " curDate = " + curDate.getTime());
+
             if(curDate.before(eventDate)) {
                 CountDownTimer timer = new CountDownTimer(milliseconds, 1000) {
                     public void onTick(long millisUntilFinished) {
@@ -94,13 +86,15 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 a.mDataText.setText("Time's Up");
             }
 
+             */
+
             a.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, EventActivity.class);
-                    intent.putExtra("title", data.get(position - 1).getTitle());
-                    intent.putExtra("text", data.get(position - 1).getText());
-                    intent.putExtra("date", data.get(position - 1).getDate().toString());
+                    intent.putExtra("title", data.get(position - 1).getEventTitle());
+                    intent.putExtra("text", data.get(position - 1).getEventText());
+                    intent.putExtra("date", data.get(position - 1).getEventDate().toString());
                     context.startActivity(intent);
                 }
             });
@@ -175,7 +169,7 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         //Log.d("TAN", "onAttachedToRecyclerView");
-        timerCount = 0;
+        //timerCount = 0;
     }
 
     @Override
@@ -194,9 +188,12 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onViewDetachedFromWindow(@NonNull RecyclerView.ViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
         //Log.d("TAN", "onViewDetachedFromWindow");
+        /*
         for(int i = 0; i < timerCount; i++) {
             EventsViewHolder buf = test.get(i);
             buf.timerCount.cancel();
         }
+
+         */
     }
 }

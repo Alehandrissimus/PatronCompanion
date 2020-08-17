@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (item.getItemId() == R.id.nav_slideshow) {
             //Bundle bundle = new Bundle();
             //bundle.putString("username", username);
-            //navController.navigate(R.id.nav_slideshow, bundle);
+            navController.navigate(R.id.nav_slideshow);
 
             drawer.closeDrawer(GravityCompat.START);
             return true;

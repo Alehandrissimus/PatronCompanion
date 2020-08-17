@@ -1,9 +1,5 @@
 package com.example.patroncompanion.ui.events;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,17 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.patroncompanion.R;
-import com.example.patroncompanion.database.DBConnectionAlertDialogFragment;
-import com.example.patroncompanion.database.DBGetEventsDate;
-import com.example.patroncompanion.database.DBGetEventsText;
-import com.example.patroncompanion.database.DBGetEventsTitle;
-import com.example.patroncompanion.utilities.AlarmReceiver;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,9 +27,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class EventsFragment extends Fragment {
     int rowsCount;
@@ -42,6 +37,9 @@ public class EventsFragment extends Fragment {
 
     private TextView mTextView;
     private RecyclerView mRecyclerView;
+    private Iterable<DataSnapshot> mSnapshotChildren;
+    private int mSnapshotChildrenCount;
+    private List<EventsElement> eventsList;
     private String[] mDataDates;
     private String[] mDataTitles;
     private String[] mDataTexts;
@@ -54,137 +52,100 @@ public class EventsFragment extends Fragment {
 
         root = inflater.inflate(R.layout.fragment_events, container, false);
 
-        //-----------------------------------------------------------------------------------------
+        eventsList = new ArrayList<>();
+        EventsElement element = new EventsElement();
+        element.setEventTitle("null");
+        element.setEventText("null");
+        element.setEventDate("null");
+        eventsList.add(element);
+        //DialogFragment dialog = new DBConnectionAlertDialogFragment();
+        //dialog.show(requireActivity().getSupportFragmentManager(), "No connection");
 
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
+        Log.d("TAG", "/eventsdata/" + currentUser.getUid());
+        DatabaseReference mDatabaseReference = mFirebaseDatabase.getReferenceFromUrl("https://test-e3678.firebaseio.com/eventsData/B60fuVyM4tMbKtzbptrNP6AKs3t2");
 
-        DBGetEventsDate dbd = new DBGetEventsDate();
-        Bundle DBDates;
-        dbd.execute(username);
+        //Query query = FirebaseDatabase.getInstance().getReference("/eventsdata/");
 
-        try {
-            DBDates = dbd.get(2000, TimeUnit.MILLISECONDS);
-            mDataDates = DBDates.getStringArray("KEY_STARR");
-            rowsCount = DBDates.getInt("KEY_INT");
-        } catch (ExecutionException | InterruptedException | TimeoutException e) {
-            e.printStackTrace();
+        mDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //if(snapshot.exists()) {
+                    if(!eventsList.isEmpty()) {
+                        eventsList.clear();
+                    }
+                    Log.d("TSH", "on data change");
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        EventsElement element = dataSnapshot.getValue(EventsElement.class);
+                        eventsList.add(element);
+                        Log.d("TAG", element.getEventDate());
+                        Log.d("TAG", element.getEventText());
+                        Log.d("TAG", element.getEventTitle());
+                    }
 
-        }
+                    mSnapshotChildren = snapshot.getChildren();
+                    Log.d("TAG", "Count " + snapshot.getChildrenCount());
+                    mSnapshotChildrenCount = (int) snapshot.getChildrenCount();
+                    //GenericTypeIndicator<List<EventsElement>> t = new GenericTypeIndicator<List<EventsElement>>() {};
+                    //eventsList = snapshot.getValue(t);
+                    //Log.d("TAG", String.valueOf(eventsList));
+                //}
+            }
 
-        DBGetEventsTitle dbt = new DBGetEventsTitle();
-        Bundle DBTitle = new Bundle();
-        DBTitle.putString("username", username);
-        DBTitle.putInt("rowsCount", rowsCount);
-        dbt.execute(DBTitle);
-
-        try {
-            mDataTitles = dbt.get(2000, TimeUnit.MILLISECONDS);
-        } catch (ExecutionException | InterruptedException | TimeoutException e) {
-            e.printStackTrace();
-            dbt.cancel(true);
-
-            DialogFragment dialog = new DBConnectionAlertDialogFragment();
-            dialog.show(requireActivity().getSupportFragmentManager(), "No connection");
-        }
-
-        DBGetEventsText dbtxt = new DBGetEventsText();
-        Bundle DBText = new Bundle();
-        DBText.putString("username", username);
-        DBText.putInt("rowsCount", rowsCount);
-        dbtxt.execute(DBText);
-
-        try {
-            mDataTexts = dbtxt.get(2000, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            e.printStackTrace();
-            dbtxt.cancel(true);
-            DialogFragment dialog = new DBConnectionAlertDialogFragment();
-            dialog.show(requireActivity().getSupportFragmentManager(), "No connection");
-        }
-
-        //-----------------------------------------------------------------------------------------
-
-
-
-        //-----------------------------------------------------------------------------------------
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("ERR", String.valueOf(error));
+            }
+        });
 
         mRecyclerView = root.findViewById(R.id.events_recycleView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        Log.d("TSH", "+ adapter");
         mAdapter = new EventsListAdapter(createMockListData(), username, getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
-        //Log.d("TAG", "EventsCalled");
         return root;
     }
 
     private List<EventsElement> createMockListData() {
+
         List<EventsElement> data = new ArrayList<>();
-        if(mDataTitles != null && mDataDates != null) {
-            for (int i = 0; i < rowsCount; i++) {
+        Log.d("TSH", "Mock list data");
+
+        Log.d("TSH", eventsList.get(0).getEventTitle());
+        if(eventsList.get(0).getEventText() != null) {
+            for (int i = 0; i < eventsList.size(); i++) {
                 data.add(new EventsElement());
-                data.get(i).setTitle(mDataTitles[i]);
-                data.get(i).setText(mDataTexts[i]);
+                data.get(i).setEventTitle(eventsList.get(i).getEventTitle());
+                data.get(i).setEventText(eventsList.get(i).getEventText());
 
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
                 Date date = null;
-                try {
-                    date = formatter.parse(mDataDates[i]);
-                    Log.d("TAM", String.valueOf(date));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                data.get(i).setDate(date);
+            /*
+            try {
+                date = formatter.parse(mDataDates[i]);
+                Log.d("TAM", String.valueOf(date));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+             */
+                data.get(i).setEventDate("213123");
+                Log.d("TSH", data.get(0).getEventTitle());
+            }
+            if (data.get(0).getEventTitle() == null) {
+                Log.d("TSH", "pizda");
             }
         }
+
         return data;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        //Log.d("TAD", "onResume called");
-
-        DBGetEventsDate dbd = new DBGetEventsDate();
-        Bundle DBDates;
-        dbd.execute(username);
-
-        try {
-            DBDates = dbd.get(2000, TimeUnit.MILLISECONDS);
-            mDataDates = DBDates.getStringArray("KEY_STARR");
-            rowsCount = DBDates.getInt("KEY_INT");
-        } catch (ExecutionException | InterruptedException | TimeoutException e) {
-            e.printStackTrace();
-
-        }
-
-        DBGetEventsTitle dbt = new DBGetEventsTitle();
-        Bundle DBTitle = new Bundle();
-        DBTitle.putString("username", username);
-        DBTitle.putInt("rowsCount", rowsCount);
-        dbt.execute(DBTitle);
-
-        try {
-            mDataTitles = dbt.get(2000, TimeUnit.MILLISECONDS);
-        } catch (ExecutionException | InterruptedException | TimeoutException e) {
-            e.printStackTrace();
-            dbt.cancel(true);
-            DialogFragment dialog = new DBConnectionAlertDialogFragment();
-            dialog.show(requireActivity().getSupportFragmentManager(), "No connection");
-        }
-
-        DBGetEventsText dbtxt = new DBGetEventsText();
-        Bundle DBText = new Bundle();
-        DBText.putString("username", username);
-        DBText.putInt("rowsCount", rowsCount);
-        dbtxt.execute(DBText);
-
-        try {
-            mDataTexts = dbtxt.get(2000, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            e.printStackTrace();
-            dbtxt.cancel(true);
-            DialogFragment dialog = new DBConnectionAlertDialogFragment();
-            dialog.show(requireActivity().getSupportFragmentManager(), "No connection");
-        }
 
         mRecyclerView = root.findViewById(R.id.events_recycleView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -195,6 +156,5 @@ public class EventsFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("TAD", "onPause called");
     }
 }
