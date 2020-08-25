@@ -1,16 +1,25 @@
 package com.example.patroncompanion;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 
 import com.example.patroncompanion.database.DBGetEventsDate;
+import com.example.patroncompanion.ui.events.EventsElement;
 import com.example.patroncompanion.ui.events.EventsFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
@@ -24,6 +33,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -33,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private NavController navController;
+
+    private List<EventsElement> eventsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         //NavigationUI.setupWithNavController(navigationView, navController);
 
-
     }
 
 
@@ -71,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.d("TAG", "Method onNavigationItemSelected");
         if (item.getItemId() == R.id.nav_slideshow) {
             //Bundle bundle = new Bundle();
-            //bundle.putString("username", username);
+            //bundle.putAll("eventsList", eventsList);
             navController.navigate(R.id.nav_slideshow);
 
             drawer.closeDrawer(GravityCompat.START);
