@@ -1,6 +1,5 @@
 package com.example.patroncompanion.ui.events;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,7 +45,6 @@ public class EventsFragment extends Fragment {
         if (getArguments() != null) {
             eventsList = getArguments().getParcelable("eventsList");
         }
-        Log.d("TAG", "events fragment username = " + eventsList);
 
         root = inflater.inflate(R.layout.fragment_events, container, false);
         pbar = (ProgressBar) root.findViewById(R.id.progress_bar);
@@ -81,6 +79,7 @@ public class EventsFragment extends Fragment {
                 data.add(new EventsElement());
                 data.get(i).setEventTitle(eventsList.get(i).getEventTitle());
                 data.get(i).setEventText(eventsList.get(i).getEventText());
+                data.get(i).setEventDate(eventsList.get(i).getEventDate());
 
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
                 Date date = null;
@@ -93,10 +92,8 @@ public class EventsFragment extends Fragment {
                 }
 
                 */
-                data.get(i).setEventDate("213123");
             }
         }
-
         return data;
     }
 
@@ -113,7 +110,9 @@ public class EventsFragment extends Fragment {
 
     public void updateList() {
         pbar.setVisibility(View.VISIBLE);
-        DatabaseReference mDatabaseReference = mFirebaseDatabase.getReferenceFromUrl("https://test-e3678.firebaseio.com/eventsData/B60fuVyM4tMbKtzbptrNP6AKs3t2");
+
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        DatabaseReference mDatabaseReference = mFirebaseDatabase.getReferenceFromUrl("https://test-e3678.firebaseio.com/eventsData/" + auth.getUid());
         mDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -121,23 +120,15 @@ public class EventsFragment extends Fragment {
                     if(!eventsList.isEmpty()) {
                         eventsList.clear();
                     }
-                    Log.d("TSH", "on data change");
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         EventsElement element = dataSnapshot.getValue(EventsElement.class);
                         eventsList.add(element);
-                        Log.d("TAG", element.getEventDate());
-                        Log.d("TAG", element.getEventText());
-                        Log.d("TAG", element.getEventTitle());
                     }
-                }
-                for(int i = 0; i < eventsList.size(); i++){
-                    Log.d("TSH", eventsList.get(i).getEventTitle() + " " + eventsList.get(i).getEventText() + " " + eventsList.get(i).getEventDate());
                 }
 
                 pbar.setVisibility(View.INVISIBLE);
                 mRecyclerView = root.findViewById(R.id.events_recycleView);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                Log.d("TSH", "+ adapter");
                 mAdapter = new EventsListAdapter(createMockListData(), username, getActivity());
                 mRecyclerView.setAdapter(mAdapter);
             }

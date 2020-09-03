@@ -18,9 +18,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.patroncompanion.R;
 import com.example.patroncompanion.database.DBAddEventData;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.lang.reflect.Array;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class EventAddActivity extends AppCompatActivity {
     private EditText mEditText, mTextDate, mTextTime;
@@ -39,6 +46,10 @@ public class EventAddActivity extends AppCompatActivity {
         mButtonConfirm = findViewById(R.id.event_insert_date);
         mButtonDate = findViewById(R.id.event_select_date_btn);
         mButtonTime = findViewById(R.id.event_select_time_btn);
+
+        final FirebaseAuth auth = FirebaseAuth.getInstance();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference mDatabaseReference = database.getReferenceFromUrl("https://test-e3678.firebaseio.com/eventsData/" + auth.getUid());
 
         mButtonDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,20 +88,30 @@ public class EventAddActivity extends AppCompatActivity {
             }
         });
 
+        EventsElement a = new EventsElement();
+        a.setEventDate("chek");
+        Log.d("tag", a.getEventDate());
+
         mButtonConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(EventAddActivity.this, DBAddEventData.class);
                 Bundle a = new Bundle();
 
-                String text = mEditText.getText().toString();
-                a.putString("STR", text);
-                a.putString("DATE", (date + " " + time));
-                Log.d("TAS", (date + " " + time));
-                intent.putExtras(a);
+                String mId = UUID.randomUUID().toString();
+                String titleData = auth.getUid();
+                String textData = mEditText.getText().toString();
+                String dateData = (date + " " + time);
 
-                DBAddEventData db = new DBAddEventData();
-                db.execute(a);
+                Map<String, EventsElement> obj = new HashMap<>();
+                obj.put("nickname", new EventsElement(mId, titleData, dateData, textData));
+
+                DatabaseReference databaseRef = mDatabaseReference.child(mId);
+                databaseRef.child("eventTitle").setValue(titleData);
+                databaseRef.child("eventText").setValue(textData);
+                databaseRef.child("eventDate").setValue(dateData);
+
+                Log.d("TAS", (mId + " " + titleData + " " + textData + " " + dateData));
                 finish();
             }
         });

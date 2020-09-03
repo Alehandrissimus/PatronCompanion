@@ -11,6 +11,12 @@ public class EventsElement {
         eventDate = "0";
         eventText = "null";
     }
+    public EventsElement(String mId, String eventTitle, String eventDate, String eventText){
+        this.mId = mId;
+        this.eventTitle = eventTitle;
+        this.eventDate = eventDate;
+        this.eventText = eventText;
+    }
 
     public String getEventTitle() {
         return eventTitle;
