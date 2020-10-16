@@ -57,28 +57,6 @@ public class LoginActivity extends AppCompatActivity {
                 String umail = mUsermail.getText().toString();
                 String upass = mPassword.getText().toString();
 
-                /*
-                DBLogin test = new DBLogin(LoginActivity.this);
-                test.execute(umail, upass);
-                try {
-                    Boolean trg = test.get(10000, TimeUnit.MILLISECONDS);
-                    if(trg) {
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.putExtra("USERNAME_KEY", umail);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        mErrorText.setVisibility(View.VISIBLE);
-                    }
-                } catch (ExecutionException | InterruptedException | TimeoutException e) {
-                    e.printStackTrace();
-                    test.cancel(true);
-                    DialogFragment dialog = new DBConnectionAlertDialogFragment();
-                    dialog.show(getSupportFragmentManager(), "No connection");
-                }
-
-                 */
-
                 mAuth = FirebaseAuth.getInstance();
                 mAuth.signInWithEmailAndPassword(umail, upass).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -90,12 +68,6 @@ public class LoginActivity extends AppCompatActivity {
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                             finish();
-
-                            /*
-                            Intent intent = new Intent();
-                            intent.putExtra("UID", user);
-
-                             */
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("TAG", "signInWithEmail:failure", task.getException());

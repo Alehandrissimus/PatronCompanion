@@ -12,7 +12,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
+
 import com.example.patroncompanion.R;
+import com.example.patroncompanion.utilities.UploadWorker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -35,26 +40,20 @@ public class HomeFragment extends Fragment {
         mTextView = (TextView) root.findViewById(R.id.text_home);
         mButton = (Button) root.findViewById(R.id.button1);
 
+        final OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(UploadWorker.class).build();
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                final FirebaseUser currentUser = mAuth.getCurrentUser();
-                FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
-                DatabaseReference mDatabaseReference = mFirebaseDatabase.getReference();
-                mDatabaseReference.child("eventsData/" + currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
-                        String value = snapshot.child("/dsa").getValue(String.class);
-                        Log.d("TAG", "Value is: " + value);
-                    }
+                WorkManager.getInstance().enqueue(request);
+            }
+        });
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.d("ERR", String.valueOf(error));
-                    }
-                });
+        WorkManager.getInstance().getWorkInfoByIdLiveData(request.getId()).observe(getViewLifecycleOwner(), new Observer<WorkInfo>() {
+            @Override
+            public void onChanged(WorkInfo workInfo) {
+                String status = workInfo.getState().name();
+
+                mTextView.append(status + "\n");
             }
         });
 
