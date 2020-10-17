@@ -18,8 +18,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
     Button mButtonLogin, mButtonFast, mButtonRegister;
@@ -40,39 +46,16 @@ public class LoginActivity extends AppCompatActivity {
         mErrorText = (TextView) findViewById(R.id.login_error_text);
 
         mButtonRegister = (Button) findViewById(R.id.login_button_registration);
-
         mFragmentManager = getSupportFragmentManager();
 
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
 
         mButtonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String umail = mUsermail.getText().toString();
                 String upass = mPassword.getText().toString();
-
-                /*
-                DBLogin test = new DBLogin(LoginActivity.this);
-                test.execute(umail, upass);
-                try {
-                    Boolean trg = test.get(10000, TimeUnit.MILLISECONDS);
-                    if(trg) {
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.putExtra("USERNAME_KEY", umail);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        mErrorText.setVisibility(View.VISIBLE);
-                    }
-                } catch (ExecutionException | InterruptedException | TimeoutException e) {
-                    e.printStackTrace();
-                    test.cancel(true);
-                    DialogFragment dialog = new DBConnectionAlertDialogFragment();
-                    dialog.show(getSupportFragmentManager(), "No connection");
-                }
-
-                 */
 
                 mAuth = FirebaseAuth.getInstance();
                 mAuth.signInWithEmailAndPassword(umail, upass).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
@@ -81,17 +64,10 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("TAG", "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
 
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                             finish();
-
-                            /*
-                            Intent intent = new Intent();
-                            intent.putExtra("UID", user);
-
-                             */
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("TAG", "signInWithEmail:failure", task.getException());
@@ -111,6 +87,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        mButtonFast = (Button) findViewById(R.id.account_b);
         mButtonFast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,11 +99,24 @@ public class LoginActivity extends AppCompatActivity {
 
                  */
 
-                FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
-                DatabaseReference mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
-
                 //FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), mUsername, null);
-                mMessagesDatabaseReference.setValue("test1");
+                //mMessagesDatabaseReference.setValue("test1");
+
+                FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
+                DatabaseReference mMessagesDatabaseReference = mFirebaseDatabase.getReference();
+                mMessagesDatabaseReference.child("eventsData/" + currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
+                        List<String> value = snapshot.child("/dsa").getValue(t);
+                        Log.d("TAG", "Value is: " + value);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
         });
 
